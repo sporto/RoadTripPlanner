@@ -11,7 +11,7 @@ h1,h2{clear:both;}
 #trip_planner{width:960px;height:600px;background-color:#fff;}#trip_planner h2{font-size:18px;margin:6px;}
 #trip_planner #search_panel{width:200px;height:600px;background-color:#cccccc;float:left;}#trip_planner #search_panel #search_box p{margin:8px;}
 #trip_planner #search_panel #search_box input[type=text]{width:100%;}
-#trip_planner #itinerary_panel{width:200px;height:600px;background-color:#99ffff;float:left;}
+#trip_planner #itinerary_panel{width:200px;height:600px;background-color:#99ffff;float:left;}#trip_planner #itinerary_panel #itinerary_items .location{background-color:#fff;height:30px;margin-bottom:10px;}
 #trip_planner #map_panel{width:560px;height:600px;float:left;background-color:#cccccc;}
 #footer_outer{width:100%;border-top:1px solid #dfdfdf;}
 #footer{margin:0 auto;text-align:left;width:960px;padding-top:10px;color:#545555;font-size:11px;}
