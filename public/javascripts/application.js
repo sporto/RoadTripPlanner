@@ -53,15 +53,20 @@ var locv2 = new LocationView({model:loc2,id:"location_"+loc2.cid});
 var locv3 = new LocationView({model:loc3,id:"location_"+loc3.cid});
 
 $(function() {
+
+   // loadMap();
+    addBindings();
+
     //initialiseModels();
     $("#itinerary_items").append(locv1.render().el);
     $("#itinerary_items").append(locv2.render().el);
     $("#itinerary_items").append(locv3.render().el);
-    loadMap();
+    
  });
 
 
 function loadMap(){
+    //load the google map
     var latlng = new google.maps.LatLng(-34.397, 150.644);
     var myOptions = {
       zoom: 8,
@@ -76,4 +81,16 @@ function loadMap(){
     };
     var map = new google.maps.Map(document.getElementById("map_canvas"),
         myOptions);
+}
+
+function addBindings(){
+    //add bindings
+    //search field binding
+    $('#search_field').keyup(onSearchFieldChange);
+}
+
+function onSearchFieldChange(event){
+    //trigger a search here
+    term = $(event.target).val();
+    
 }
