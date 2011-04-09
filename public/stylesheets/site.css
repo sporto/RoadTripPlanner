@@ -1,0 +1,39 @@
+body{text-align:center;background:#eceeee;}
+h1,h2{clear:both;}
+#header_outer{border-bottom:1px solid #dbdbdb;}
+#header{width:960px;margin:0 auto;height:40px;text-align:left;color:#494949;border-bottom-color:#585858;}#header #logo{float:left;}
+#header #mainnav{margin-top:12px;float:left;margin-left:40px;}
+#header #utils{margin-top:12px;float:right;margin-right:10px;}
+#header a{text-decoration:none;}
+#header a:hover{text-decoration:underline;}
+#main_outer{width:100%;background-color:#fffeff;}
+#main{width:960px;margin:0 auto;text-align:left;padding:0px;padding-top:8px;padding-bottom:20px;}
+#trip_planner{width:960px;height:600px;background-color:#fff;}#trip_planner h2{font-size:18px;margin:6px;}
+#trip_planner #search_panel{width:200px;height:600px;background-color:#cccccc;float:left;}#trip_planner #search_panel #search_box p{margin:8px;}
+#trip_planner #search_panel #search_box input[type=text]{width:100%;}
+#trip_planner #itinerary_panel{width:200px;height:600px;background-color:#99ffff;float:left;}
+#trip_planner #map_panel{width:560px;height:600px;float:left;background-color:#cccccc;}
+#footer_outer{width:100%;border-top:1px solid #dfdfdf;}
+#footer{margin:0 auto;text-align:left;width:960px;padding-top:10px;color:#545555;font-size:11px;}
+div#notice_outer{width:100%;background-color:#4451c8;padding:4px;margin-bottom:4px;color:#fffeff;font-weight:bold;}
+div_alert_outer{width:100%;border:2px solid #ff3333;padding:4px;margin-bottom:4px;color:#ff0000;font-weight:bold;}
+div#error_explanation{border:2px solid #ff3333;color:#ff0000;padding:4px;margin-bottom:4px;}
+div#error_explanation h2{font-size:15px;margin:0px;}
+div#error_explanation ul{margin:0px;}
+div.actions{margin-top:4px;margin-bottom:4px;clear:both;}
+.right a.button,.right button,.right input[type=submit]{margin-left:8px;margin-right:0px;}
+a.button,button,input[type=submit]{margin-right:8px;background-color:#eee;border:1px solid #b2b4b4;border-top:1px solid #eee;border-left:1px solid #eee;font-size:12px;text-decoration:none;font-weight:bold;color:#565656;cursor:pointer;padding-left:8px;padding-right:8px;padding-top:0px;padding-bottom:0px;height:24px;line-height:24px;display:inline-block;vertical-align:top;}
+button img,a.button img{margin:0 3px -3px 0 !important;padding:0;border:none;width:16px;height:16px;}
+button:hover,a.button:hover,input[type=submit]:hover{background-color:#dff4ff;border:1px solid #c2e1ef;color:#336699;}
+a.button:active{background-color:#6299c5;border:1px solid #6299c5;color:#fff;}
+button.positive,a.positive{color:#529214;}
+a.positive:hover,button.positive:hover{background-color:#E6EFC2;border:1px solid #C6D880;color:#529214;}
+a.positive:active{background-color:#529214;border:1px solid #529214;color:#fff;}
+a.negative,button.negative{color:#d12f19;}
+a.negative:hover,button.negative:hover{background:#fbe3e4;border:1px solid #fbc2c4;color:#d12f19;}
+a.negative:active{background-color:#d12f19;border:1px solid #d12f19;color:#fff;}
+input[type=text],input[type=password]{font-size:14px;height:20px;border:1px solid #9ea462;background-color:#fefdd4;}
+label{font-size:14px;color:#7a7a7a;}
+.field{margin-bottom:10px;}
+form .actions{padding-top:10px;}
+.clear{clear:both;}
