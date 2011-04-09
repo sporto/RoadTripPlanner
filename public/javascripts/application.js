@@ -57,5 +57,23 @@ $(function() {
     $("#itinerary_items").append(locv1.render().el);
     $("#itinerary_items").append(locv2.render().el);
     $("#itinerary_items").append(locv3.render().el);
-
+    loadMap();
  });
+
+
+function loadMap(){
+    var latlng = new google.maps.LatLng(-34.397, 150.644);
+    var myOptions = {
+      zoom: 8,
+      center: latlng,
+      panControl: true,
+      zoomControl: true,
+        mapTypeControl: false,
+        scaleControl: true,
+        streetViewControl: false,
+        overviewMapControl: false,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    var map = new google.maps.Map(document.getElementById("map_canvas"),
+        myOptions);
+}
