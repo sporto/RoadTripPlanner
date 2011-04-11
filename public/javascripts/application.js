@@ -79,6 +79,14 @@ var AppController = Backbone.Controller.extend({
     },
 
     initialize:function(){
+        //load the map
+        this.loadMap();
+
+        //set up the google services
+        this.directionsService = new google.maps.DirectionsService();
+        this.directionsDisplay = new google.maps.DirectionsRenderer();
+        this.directionsDisplay.setMap(this.map);
+        
         //create a collection for handling locations in the itinerary
         this.location_collection = new LocationCollection();
 
@@ -144,13 +152,13 @@ var AppController = Backbone.Controller.extend({
         var location_model = new LocationModel(obj);
         location_model.set({index:ix});
 
-        //add the model to the collection
-        this.location_collection.add(location_model);
-
         this.addLocationModelToItinerary(location_model);
     },
 
     addLocationModelToItinerary:function(model){
+        //add the model to the collection
+        this.location_collection.add(model);
+
         //create a view for this location
         var location_view = new ItineraryLocationView({model:model,id:"location_"+model.cid});
         
@@ -168,6 +176,7 @@ var AppController = Backbone.Controller.extend({
     removeLocation:function(view){
         //view.remove();
         //remove the associated model from the collection
+        //todo is it necessary to remove the view, should not be enough by removing the model?
         this.location_collection.remove(view.model);
         view.remove();
         //console.log(this.location_collection.length);
@@ -188,14 +197,78 @@ var AppController = Backbone.Controller.extend({
         //force a resort on the collection as the indexes may have changed
         app_controller.location_collection.sort();
 
+        var locs = new Array();
+
         app_controller.location_collection.each(function(model){
-            log("name " + model.get("name"));
+            //log("name " + model.get("name"));
+            var ll = new google.maps.LatLng(model.get("lt"),model.get("lg"));
+            //locs.push(model.get("lg")+","+model.get("lt"));
+            locs.push(ll);
         });
 
+        if(locs.length<2){
+            //no route to draw
+            //empty the previous route
+
+            return;
+        }
+
+        var origin = locs.shift();
+        var destination = locs.pop();
+
+        //create a directions request object
+        var request = {
+            origin:origin,
+            destination:destination,
+             travelMode: google.maps.DirectionsTravelMode.DRIVING
+        };
+
+        //add waypoints if any
+        if(locs.length>0){
+            waypoints = [];
+            _.each(locs,function(loc){
+              waypoints.push({location:loc});
+            });
+            request.waypoints = waypoints;
+            //waypoints += "&waypoints="+locs.join("|");
+        }
+
+        //log(dir_req);
+
+//        var request = {
+//            origin:'Sydney,AU',
+//            destination:'Melbourne,AU',
+//            travelMode: google.maps.DirectionsTravelMode.DRIVING
+//         };
+
+        app_controller.directionsService.route(request, function(result,status){
+            log(status);
+            if(status==google.maps.DirectionsStatus.OK){
+                app_controller.directionsDisplay.setDirections(result);
+            }
+        });
         
+        
+        //log(locs);
+        //create the api call
+        //var url="http://maps.googleapis.com/maps/api/directions/json?origin="+origin+"&destination="+destination+waypoints+"&sensor=false";
+        //url ="http://maps.googleapis.com/maps/api/directions/json?origin=Boston,MA&destination=Concord,MA&waypoints=Charlestown,MA|Lexington,MA&sensor=false";
+        //log(api);
+//        $.getJSON(url+"&callback=?",app_controller.onRouteRetrieved);
+//        jQuery.ajax({
+//            url:url,
+//            success:app_controller.onRouteRetrieved,
+//            dataType:"jsonp",
+//            jsonpCallback:""
+//        });
+    },
+
+    onRouteRetrieved:function(data){
+        log("done"+data);
     },
 
     onLocationCollectionAdd:function(model){
+        log("onLocationCollectionAdd");
         //this is scoped to the collection because the event was bound to it
         //todo find a way to scope the event to the controller
         //log("onLocationCollectionAdd");
@@ -210,7 +283,26 @@ var AppController = Backbone.Controller.extend({
 
     onLocationCollectionChange:function(){
         //log("onLocationCollectionChange");
+    },
+
+    loadMap:function(){
+        //load the google map
+        var latlng = new google.maps.LatLng(-34.397, 150.644);
+        var myOptions = {
+          zoom: 8,
+          center: latlng,
+          panControl: true,
+          zoomControl: true,
+            mapTypeControl: false,
+            scaleControl: true,
+            streetViewControl: false,
+            overviewMapControl: false,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        this.map = new google.maps.Map(document.getElementById("map_canvas"),
+            myOptions);
     }
+
 });
 
 //create an array of mock-up cities
@@ -231,7 +323,7 @@ cities = {
 
 $(function() {
 
-    loadMap();
+    //loadMap();
     addBindings();
 
     //create the backbone collection
@@ -255,23 +347,7 @@ $(function() {
     app_controller.addLocationToItinerary(5,cities.echu);
  });
 
-function loadMap(){
-    //load the google map
-    var latlng = new google.maps.LatLng(-34.397, 150.644);
-    var myOptions = {
-      zoom: 8,
-      center: latlng,
-      panControl: true,
-      zoomControl: true,
-        mapTypeControl: false,
-        scaleControl: true,
-        streetViewControl: false,
-        overviewMapControl: false,
-      mapTypeId: google.maps.MapTypeId.ROADMAP
-    };
-    var map = new google.maps.Map(document.getElementById("map_canvas"),
-        myOptions);
-}
+
 
 function addBindings(){
     //add bindings
