@@ -77,19 +77,24 @@ var AppController = Backbone.Controller.extend({
     routes:{
 
     },
+
     initialize:function(){
         //create a collection for handling locations in the itinerary
         this.location_collection = new LocationCollection();
+
         //create a collection for handling search results
         this.result_collection = new SearchResultCollection();
+
         //bind events on the collection
         this.location_collection.bind("add",this.onLocationCollectionAdd);
         this.location_collection.bind("remove",this.onLocationCollectionRemove);
         this.location_collection.bind("change",this.onLocationCollectionChange);
+
         //add a comparator function to the collection to it stays sorted by index
         this.location_collection.comparator=function(location_model){
             return location_model.get('index');
         };
+
         //make the list sortable
         $("#itinerary_items").sortable({
             axis:'y',
@@ -97,59 +102,43 @@ var AppController = Backbone.Controller.extend({
         });
         
     },
+
     onLocationsSortStop:function(event,ui){
         //todo find a better way to bind this so we know about the view used
         //todo scope this to the controller
 
         //loop through all the collection of items in the itinerary and get the new indexes
-        //get all the items
-       // var items = $("#itinerary_items").children;
-        $("#itinerary_items").children.each(function(index){
-            log(index);
+        $("#itinerary_items").children().each(function(index, ele){
+            var cid = $(ele).data('model_cid');
+            //find the model in the collection
+            var model = app_controller.location_collection.getByCid(cid);
+            //refresh the index on the model
+            model.set({index:index});
         });
-
-        //get the new index of the element
-        var index = $(this).children('div').index(ui.item[0]);
-
-        //create a temp collection for handling the models
-        //var temp_collection = new LocationCollection();
-
-        //todo find the model by using collection.getByCid(cid)
-        var cid =  $(ui.item[0]).data('model_cid') ;
-        log("cid = " + cid);
-        
-        //find the model that corresponds to this object
-        app_controller.location_collection.each(function(model){
-            if(model.view.el==ui.item[0]){
-                //this is the model moved
-                //remove this model and reinsert it in the new position
-                //refresh the index property of the model so the collection is resorted
-                //model.index =
-            }else{
-                
-            }
-        });
-
-        //todo reorder the models in the collection
 
         //re order the collection
         //trigger a route refresh
-        //app_controller.refreshRouteDo();
+        app_controller.refreshRouteDo();
     },
+
     addLocationToSearch:function(ix,obj){
         //object received should be
         //{name:"location_name",lt:latitude,lg:longitude}
+
       //create a new model for this location
         var result_model = new LocationModel(obj);
         result_model.set({index:ix});
         
      //add the model to the collection
         this.result_collection.add(result_model);
+
       //create a view for this result
         var result_view = new SearchResultView({model:result_model,id:"result_"+result_model.cid});
+
       //add the view to the list
        $("#search_results").append(result_view.render().el);
     },
+
     addLocationToItinerary:function(ix,obj){
         //create a model for this location
         var location_model = new LocationModel(obj);
@@ -160,6 +149,7 @@ var AppController = Backbone.Controller.extend({
 
         this.addLocationModelToItinerary(location_model);
     },
+
     addLocationModelToItinerary:function(model){
         //create a view for this location
         var location_view = new ItineraryLocationView({model:model,id:"location_"+model.cid});
@@ -170,11 +160,11 @@ var AppController = Backbone.Controller.extend({
         //add the view to the list
         $("#itinerary_items").append(location_view.render().el);
     },
+
     centerOnLocation:function(view){
-        //event.preventDefault();
-        //b = event.target;
         log(view);
     },
+
     removeLocation:function(view){
         //view.remove();
         //remove the associated model from the collection
@@ -182,6 +172,7 @@ var AppController = Backbone.Controller.extend({
         view.remove();
         //console.log(this.location_collection.length);
     },
+
     refreshRoute:function(){
       //refreshes the route on the map
       //do not execute to soon
@@ -190,14 +181,20 @@ var AppController = Backbone.Controller.extend({
        //generate a timeout object that will be triggered in 2 seconds
         this.refreshRouteTimer = setTimeout(this.refreshRouteDo, 1500);
     },
+
     refreshRouteDo:function(){
       //proceed with the refresh
         log("refreshRouteDo");
+        //force a resort on the collection as the indexes may have changed
+        app_controller.location_collection.sort();
 
         app_controller.location_collection.each(function(model){
             log("name " + model.get("name"));
         });
+
+        
     },
+
     onLocationCollectionAdd:function(model){
         //this is scoped to the collection because the event was bound to it
         //todo find a way to scope the event to the controller
@@ -205,10 +202,12 @@ var AppController = Backbone.Controller.extend({
         //log(this);
         app_controller.refreshRoute();
     },
+
     onLocationCollectionRemove:function(model){
         //log("onLocationCollectionRemove");
         app_controller.refreshRoute();
     },
+
     onLocationCollectionChange:function(){
         //log("onLocationCollectionChange");
     }
