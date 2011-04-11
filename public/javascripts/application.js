@@ -29,14 +29,11 @@ var ItineraryLocationView = Backbone.View.extend({
         "click .button.remove":"removeLocation"
     },
     initialize:function(options){
-        //make the element draggable
-        //this.el.draggable();
-
         //when a event is triggered the render is called again
          //_.bindAll(this, "render");
 
         //associate this view object with the DOM element
-        //$(this.el).data('view',this);
+        $(this.el).data("model_cid",this.model.cid);
     },
     render:function(){
         this.el.innerHTML = Mustache.to_html(itinerary_location_template, {name:this.model.get("name")});
@@ -44,7 +41,8 @@ var ItineraryLocationView = Backbone.View.extend({
     },
     centerOnLocation:function(){
         //todo views should not be calling the controller directly, they should broadcast an event
-        app_controller.centerOnLocation(this);
+        //app_controller.centerOnLocation(this);
+
     },
     removeLocation:function(){
         app_controller.removeLocation(this);
@@ -103,6 +101,13 @@ var AppController = Backbone.Controller.extend({
         //todo find a better way to bind this so we know about the view used
         //todo scope this to the controller
 
+        //loop through all the collection of items in the itinerary and get the new indexes
+        //get all the items
+       // var items = $("#itinerary_items").children;
+        $("#itinerary_items").children.each(function(index){
+            log(index);
+        });
+
         //get the new index of the element
         var index = $(this).children('div').index(ui.item[0]);
 
@@ -110,6 +115,8 @@ var AppController = Backbone.Controller.extend({
         //var temp_collection = new LocationCollection();
 
         //todo find the model by using collection.getByCid(cid)
+        var cid =  $(ui.item[0]).data('model_cid') ;
+        log("cid = " + cid);
         
         //find the model that corresponds to this object
         app_controller.location_collection.each(function(model){
@@ -127,7 +134,7 @@ var AppController = Backbone.Controller.extend({
 
         //re order the collection
         //trigger a route refresh
-        app_controller.refreshRouteDo();
+        //app_controller.refreshRouteDo();
     },
     addLocationToSearch:function(ix,obj){
         //object received should be
