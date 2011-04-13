@@ -90,10 +90,19 @@ body {
         background-color:#333333;
         float:left;
         color:white;
-                       
-        h2{
-        }
+        position:relative;
+
         #search_box{
+            position:absolute;
+            left:0px;
+            top:0px;
+            height:78px;
+            width:200px;
+            /*margin:0px;*/
+            border-bottom-color:#000000;
+            border-bottom-style:solid;
+            border-bottom-width:2px;
+            /*background-color:#999999;*/
             p{
                 margin:8px;
             }
@@ -102,18 +111,49 @@ body {
                 font-size:14px;
             }
         }
+        #search_results{
+            position:absolute;
+            left:0px;
+            top:80px;
+            overflow-y:scroll;
+            overflow-x:hidden;
+            height:520px;
+            width:200px;
+            
+        }
     }
     #itinerary_panel{
         width:200px;
         height:600px;
         background-color:#eee;
         float:left;
-        .instructions{
-            margin-left:10px;
-            font-size:10px;
-            margin-bottom:4px;
+        position:relative;
+
+        #itinerary_head{
+            position:absolute;
+            left:0px;
+            top:0px;
+            height:78px;
+            width:200px;
+            border-bottom-color:#ffffff;
+            border-bottom-style:solid;
+            border-bottom-width:2px;
+            .instructions{
+                margin-left:10px;
+                font-size:10px;
+                margin-bottom:4px;
+            }
         }
+
+
         #itinerary_items{
+            position:absolute;
+            left:0px;
+            top:80px;
+            overflow-y:scroll;
+            overflow-x:hidden;
+            height:520px;
+            width:200px;
 
         }
     }
@@ -146,9 +186,8 @@ body {
 	}
 
    .location, .search_result{
-        height:30px;
         margin-bottom:2px;
-        height:45px;
+        height:65px;
         .name{
             margin-left:8px;
             margin-top:4px;
@@ -166,8 +205,11 @@ body {
 
    /* actions buttons for locations */
     .actions{
-        float:right;
+        /*float:right;*/
         margin-right:4px;
+        margin-top:2px;
+        text-align:right;
+
         .button{
             display:inline-block;
             padding-left:4px;

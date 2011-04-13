@@ -9,16 +9,17 @@ h1,h2{clear:both;}
 #main_outer{width:100%;background-color:#666666;}
 #main{width:960px;margin:0 auto;text-align:left;padding:0px;padding-top:8px;padding-bottom:20px;}
 #trip_planner{width:960px;height:600px;background-color:#fff;border-color:#999999;border-width:4px;border-style:solid;}#trip_planner h2{font-size:18px;margin:6px;}
-#trip_planner #search_panel{width:200px;height:600px;background-color:#333333;float:left;color:white;}
-#trip_planner #search_panel #search_box p{margin:8px;}
+#trip_planner #search_panel{width:200px;height:600px;background-color:#333333;float:left;color:white;position:relative;}#trip_planner #search_panel #search_box{position:absolute;left:0px;top:0px;height:78px;width:200px;border-bottom-color:#000000;border-bottom-style:solid;border-bottom-width:2px;}#trip_planner #search_panel #search_box p{margin:8px;}
 #trip_planner #search_panel #search_box input[type=text]{width:170px;font-size:14px;}
-#trip_planner #itinerary_panel{width:200px;height:600px;background-color:#eee;float:left;}#trip_planner #itinerary_panel .instructions{margin-left:10px;font-size:10px;margin-bottom:4px;}
+#trip_planner #search_panel #search_results{position:absolute;left:0px;top:80px;overflow-y:scroll;overflow-x:hidden;height:520px;width:200px;}
+#trip_planner #itinerary_panel{width:200px;height:600px;background-color:#eee;float:left;position:relative;}#trip_planner #itinerary_panel #itinerary_head{position:absolute;left:0px;top:0px;height:78px;width:200px;border-bottom-color:#ffffff;border-bottom-style:solid;border-bottom-width:2px;}#trip_planner #itinerary_panel #itinerary_head .instructions{margin-left:10px;font-size:10px;margin-bottom:4px;}
+#trip_planner #itinerary_panel #itinerary_items{position:absolute;left:0px;top:80px;overflow-y:scroll;overflow-x:hidden;height:520px;width:200px;}
 #trip_planner #map_panel{width:560px;height:600px;float:left;background-color:#cccccc;position:relative;}#trip_planner #map_panel #map_canvas{width:560px;height:600px;}
 #trip_planner #map_panel #map_loader{background-color:#000;position:absolute;width:80px;height:80px;z-index:100;text-align:center;color:#fff;left:240px;top:260px;padding-top:16px;-moz-border-radius:5px;-webkit-border-radius:5px;display:none;}
-#trip_planner .location,#trip_planner .search_result{height:30px;margin-bottom:2px;height:45px;}#trip_planner .location .name,#trip_planner .search_result .name{margin-left:8px;margin-top:4px;}
+#trip_planner .location,#trip_planner .search_result{margin-bottom:2px;height:65px;}#trip_planner .location .name,#trip_planner .search_result .name{margin-left:8px;margin-top:4px;}
 #trip_planner .location{background-color:#fff;}
 #trip_planner .search_result{background-color:#000000;}
-#trip_planner .actions{float:right;margin-right:4px;}#trip_planner .actions .button{display:inline-block;padding-left:4px;padding-right:4px;height:16px;line-height:16px;font-size:9px;margin-left:8px;background-color:#333333;color:white;text-decoration:none;}#trip_planner .actions .button:hover{text-decoration:underline;}
+#trip_planner .actions{margin-right:4px;margin-top:2px;text-align:right;}#trip_planner .actions .button{display:inline-block;padding-left:4px;padding-right:4px;height:16px;line-height:16px;font-size:9px;margin-left:8px;background-color:#333333;color:white;text-decoration:none;}#trip_planner .actions .button:hover{text-decoration:underline;}
 #footer_outer{width:100%;border-top:1px solid #dfdfdf;}
 #footer{margin:0 auto;text-align:left;width:960px;padding-top:10px;color:#545555;font-size:11px;}
 .clear{clear:both;}

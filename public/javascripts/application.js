@@ -1,6 +1,6 @@
 //define a mustache template for the location
-var search_location_template="<div class='name'>{{name}}</div><div class='actions'><a href='#' class='button center'>Center</a><a href='#' class='button add'>Add</a> </div>";
-var itinerary_location_template="<div class='name'>{{name}}</div><div class='actions'><a href='#' class='button center'>Center</a><a href='#' class='button remove'>Remove</a> </div>";
+var search_location_template="<div class='actions'><a href='#' class='button center'>Center</a><a href='#' class='button add'>Add</a> </div><div class='name'>{{name}}</div>";
+var itinerary_location_template="<div class='actions'><a href='#' class='button center'>Center</a><a href='#' class='button remove'>Remove</a> </div><div class='name'>{{name}}</div>";
 
 //Model for search result
 //var SearchResultModel = Backbone.Model.extend();
@@ -16,11 +16,6 @@ var itinerary_location_template="<div class='name'>{{name}}</div><div class='act
 //create the location collection class
 var LocationCollection = Backbone.Collection.extend({
   model: LocationModel
-});
-
-//collection for search results
-var SearchResultCollection  = Backbone.Collection.extend({
-    model: LocationModel
 });
 
 //view for itinerary location
@@ -88,14 +83,19 @@ var AppController = Backbone.Controller.extend({
         this.directionsService = new google.maps.DirectionsService();
         this.directionsDisplay = new google.maps.DirectionsRenderer();
         this.directionsDisplay.setMap(this.map);
-        
+        //service for geocoding (finding cities)
+        this.geocoder = new google.maps.Geocoder();
+
         //create a collection for handling locations in the itinerary
         this.location_collection = new LocationCollection();
 
         //create a collection for handling search results
-        this.result_collection = new SearchResultCollection();
+        this.result_collection = new LocationCollection();
 
-        //bind events on the collection
+        //bind events on the search results collection
+        this.result_collection.bind("refresh", this.onResultCollectionRefresh);
+
+        //bind events on the itinerary collection
         this.location_collection.bind("add",this.onLocationCollectionAdd);
         this.location_collection.bind("remove",this.onLocationCollectionRemove);
         this.location_collection.bind("change",this.onLocationCollectionChange);
@@ -159,7 +159,16 @@ var AppController = Backbone.Controller.extend({
      //add the model to the collection
         this.result_collection.add(model);
 
-      //create a view for this result
+     //add a listener for this model
+        model.bind("remove",this.onModelRemove);
+
+      this.addResultView(model);
+    },
+
+    addResultView:function(model){
+        //this adds a result view to the collection view
+
+        //create a view for this result
         var result_view = new SearchResultView({model:model,id:"result_"+model.cid});
 
       //add the view to the list
@@ -179,7 +188,10 @@ var AppController = Backbone.Controller.extend({
 
         //models are added at the end of the collection
         var new_ix = this.location_collection.length;
-        model.set({index:new_ix})
+        model.set({index:new_ix});
+
+        //add a listener for this model
+        model.bind("remove",this.onModelRemove);
 
         //add the model to the collection
         this.location_collection.add(model);
@@ -206,19 +218,15 @@ var AppController = Backbone.Controller.extend({
     },
 
     removeLocation:function(view){
-        //view.remove();
         //remove the associated model from the collection
-        //todo is it necessary to remove the view, should not be enough by removing the model?
+        //the view is removed via an event listener added to the model when created
         this.location_collection.remove(view.model);
-        view.remove();
-        //console.log(this.location_collection.length);
     },
 
     refreshRoute:function(){
       //refreshes the route on the map
-      //do not execute to soon
-        //log("refreshRoute");
-        clearTimeout(this.refreshRouteTimer)
+      //do not execute to soon because the user might do two actions in a row
+        clearTimeout(this.refreshRouteTimer);
        //generate a timeout object that will be triggered in 2 seconds
         this.refreshRouteTimer = setTimeout(this.refreshRouteDo, 1500);
     },
@@ -298,8 +306,34 @@ var AppController = Backbone.Controller.extend({
         //log("onLocationCollectionChange");
     },
 
+    onResultCollectionRefresh:function(){
+        //called when the whole collection is replaced
+        log("onResultCollectionRefresh");
+        //this event doesn't seem to trigger a remove event on the models
+        //the entire collection of views need to be refreshed
+        app_controller.refreshResultCollectionView();
+    },
+
+    onModelRemove:function(model){
+        //log("onModelRemove");
+        //remove the view
+        model.view.remove();
+    },
+
+    refreshResultCollectionView:function(){
+        //remove all current results
+        $("#search_results").children().remove();
+
+        //add the current models back in
+        app_controller.result_collection.each(function(model){
+            //add view
+            app_controller.addResultView(model);
+        });
+    },
+
     loadMap:function(){
         //load the google map
+        //todo get the location of the user to pass it as the center
         var latlng = new google.maps.LatLng(-34.397, 150.644);
         var myOptions = {
           zoom: 8,
@@ -314,6 +348,43 @@ var AppController = Backbone.Controller.extend({
         };
         this.map = new google.maps.Map(document.getElementById("map_canvas"),
             myOptions);
+    },
+
+    search:function(term){
+        //delete all the results
+        this.result_collection.refresh();
+
+        //log(this.result_collection.length);
+
+        //return;
+        //if the term is less than 4 chars then ignore
+        if(term.length<4) return;
+        //log("search");
+        //get the current center
+        var center = this.map.getCenter();
+        this.geocoder.geocode( { 'address': term}, function(results, status) { app_controller.searchDone(results, status); });
+    },
+    searchDone:function(results, status){
+
+     if (status == google.maps.GeocoderStatus.OK) {
+
+        this.map.setCenter(results[0].geometry.location);
+        var marker = new google.maps.Marker({
+            map: this.map,
+            position: results[0].geometry.location
+        });
+
+         _.each(results, function(res){
+             //log("lat = " + res.geometry.location.lat());
+             var model = new LocationModel({name:res.formatted_address,lt:res.geometry.location.lat() , lg:res.geometry.location.lng() });
+            app_controller.addLocationModelToSearch(model);
+         });
+         //show the results in the results collection view
+
+
+      } else {
+        log("Geocode was not successful for the following reason: " + status);
+      }
     }
 
 });
@@ -347,10 +418,10 @@ $(function() {
     app_controller = new AppController();
 
     //add some dummy locations to the search
-    app_controller.addLocationToSearch(cities.wwag);
-    app_controller.addLocationToSearch(cities.woll);
-    app_controller.addLocationToSearch(cities.wanga);
-    app_controller.addLocationToSearch(cities.albu);
+//    app_controller.addLocationToSearch(cities.wwag);
+//    app_controller.addLocationToSearch(cities.woll);
+//    app_controller.addLocationToSearch(cities.wanga);
+//    app_controller.addLocationToSearch(cities.albu);
 
     //add some dummy locations to the itinerary
     app_controller.addLocationToItinerary(cities.echu);
@@ -371,7 +442,8 @@ function addBindings(){
 function onSearchFieldChange(event){
     //trigger a search here
     term = $(event.target).val();
-    
+    //send the seach to the appcontroller
+    app_controller.search(term);
 }
 
 //function addLocationToIti(name){
