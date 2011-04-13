@@ -7,7 +7,10 @@ var itinerary_location_template="<div class='name'>{{name}}</div><div class='act
 
 //create the location model class
  var LocationModel = Backbone.Model.extend({
-    view:null
+    view:null,
+     getGoogleLtLg:function(){
+         return new google.maps.LatLng(this.get("lt"),this.get("lg"));
+     }
 });
 
 //create the location collection class
@@ -41,8 +44,7 @@ var ItineraryLocationView = Backbone.View.extend({
     },
     centerOnLocation:function(){
         //todo views should not be calling the controller directly, they should broadcast an event
-        //app_controller.centerOnLocation(this);
-
+        app_controller.centerOnLocation(this);
     },
     removeLocation:function(){
         app_controller.removeLocation(this);
@@ -67,7 +69,7 @@ var SearchResultView = Backbone.View.extend({
         app_controller.centerOnLocation(this);
     },
     addLocation:function(){
-        app_controller.addLocationModelToItinerary(this.model);
+        app_controller.addLocationModelToItinerary(this.model.clone());
         //app_controller.addLocationToItinerary(this.model.get("name"));
     }
 });
@@ -111,6 +113,14 @@ var AppController = Backbone.Controller.extend({
         
     },
 
+    showMapLoader:function(){
+      $("#map_loader").show();
+    },
+
+    hideMapLoader:function(){
+        $("#map_loader").hide();  
+    },
+
     onLocationsSortStop:function(event,ui){
         //todo find a better way to bind this so we know about the view used
         //todo scope this to the controller
@@ -129,33 +139,48 @@ var AppController = Backbone.Controller.extend({
         app_controller.refreshRouteDo();
     },
 
-    addLocationToSearch:function(ix,obj){
+    addLocationToSearch:function(obj){
         //object received should be
         //{name:"location_name",lt:latitude,lg:longitude}
 
       //create a new model for this location
-        var result_model = new LocationModel(obj);
-        result_model.set({index:ix});
-        
+        var model = new LocationModel(obj);
+
+        this.addLocationModelToSearch(model);
+    },
+
+    addLocationModelToSearch:function(model){
+
+        //get the new index for the model
+        var ix = this.result_collection.length;
+
+        model.set({index:ix});
+
      //add the model to the collection
-        this.result_collection.add(result_model);
+        this.result_collection.add(model);
 
       //create a view for this result
-        var result_view = new SearchResultView({model:result_model,id:"result_"+result_model.cid});
+        var result_view = new SearchResultView({model:model,id:"result_"+model.cid});
 
       //add the view to the list
        $("#search_results").append(result_view.render().el);
     },
 
-    addLocationToItinerary:function(ix,obj){
+    addLocationToItinerary:function(obj){
+        //this functions add a location model from an options object
         //create a model for this location
         var location_model = new LocationModel(obj);
-        location_model.set({index:ix});
+        //location_model.set({index:ix});
 
         this.addLocationModelToItinerary(location_model);
     },
 
     addLocationModelToItinerary:function(model){
+
+        //models are added at the end of the collection
+        var new_ix = this.location_collection.length;
+        model.set({index:new_ix})
+
         //add the model to the collection
         this.location_collection.add(model);
 
@@ -170,7 +195,14 @@ var AppController = Backbone.Controller.extend({
     },
 
     centerOnLocation:function(view){
-        log(view);
+        //log(view);
+        //get the model
+        model = view.model;
+        var ll = model.getGoogleLtLg();
+        ///this.map.setCenter(ll);
+        //log("ll = " + ll);
+        
+        this.map.panTo(ll);
     },
 
     removeLocation:function(view){
@@ -194,15 +226,17 @@ var AppController = Backbone.Controller.extend({
     refreshRouteDo:function(){
       //proceed with the refresh
         log("refreshRouteDo");
+
+        app_controller.showMapLoader();
+
         //force a resort on the collection as the indexes may have changed
         app_controller.location_collection.sort();
 
         var locs = new Array();
 
         app_controller.location_collection.each(function(model){
-            //log("name " + model.get("name"));
-            var ll = new google.maps.LatLng(model.get("lt"),model.get("lg"));
-            //locs.push(model.get("lg")+","+model.get("lt"));
+            log(model.get("name"));
+            var ll = model.getGoogleLtLg();
             locs.push(ll);
         });
 
@@ -233,34 +267,13 @@ var AppController = Backbone.Controller.extend({
             //waypoints += "&waypoints="+locs.join("|");
         }
 
-        //log(dir_req);
-
-//        var request = {
-//            origin:'Sydney,AU',
-//            destination:'Melbourne,AU',
-//            travelMode: google.maps.DirectionsTravelMode.DRIVING
-//         };
-
         app_controller.directionsService.route(request, function(result,status){
             log(status);
             if(status==google.maps.DirectionsStatus.OK){
                 app_controller.directionsDisplay.setDirections(result);
             }
+            app_controller.hideMapLoader();
         });
-        
-        
-        //log(locs);
-        //create the api call
-        //var url="http://maps.googleapis.com/maps/api/directions/json?origin="+origin+"&destination="+destination+waypoints+"&sensor=false";
-        //url ="http://maps.googleapis.com/maps/api/directions/json?origin=Boston,MA&destination=Concord,MA&waypoints=Charlestown,MA|Lexington,MA&sensor=false";
-        //log(api);
-//        $.getJSON(url+"&callback=?",app_controller.onRouteRetrieved);
-//        jQuery.ajax({
-//            url:url,
-//            success:app_controller.onRouteRetrieved,
-//            dataType:"jsonp",
-//            jsonpCallback:""
-//        });
     },
 
     onRouteRetrieved:function(data){
@@ -334,17 +347,17 @@ $(function() {
     app_controller = new AppController();
 
     //add some dummy locations to the search
-    app_controller.addLocationToSearch(1,cities.wwag);
-    app_controller.addLocationToSearch(2,cities.woll);
-    app_controller.addLocationToSearch(3,cities.wanga);
-    app_controller.addLocationToSearch(4,cities.albu);
+    app_controller.addLocationToSearch(cities.wwag);
+    app_controller.addLocationToSearch(cities.woll);
+    app_controller.addLocationToSearch(cities.wanga);
+    app_controller.addLocationToSearch(cities.albu);
 
     //add some dummy locations to the itinerary
-    app_controller.addLocationToItinerary(1,cities.melb);
-    app_controller.addLocationToItinerary(2,cities.bend);
-    app_controller.addLocationToItinerary(3,cities.ball);
-    app_controller.addLocationToItinerary(4,cities.trar);
-    app_controller.addLocationToItinerary(5,cities.echu);
+    app_controller.addLocationToItinerary(cities.echu);
+    app_controller.addLocationToItinerary(cities.bend);
+    app_controller.addLocationToItinerary(cities.ball);
+    app_controller.addLocationToItinerary(cities.melb);
+    //app_controller.addLocationToItinerary(5,cities.echu);
  });
 
 

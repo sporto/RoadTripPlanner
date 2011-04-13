@@ -1,19 +1,20 @@
-body{text-align:center;background:#eceeee;}
+body{text-align:center;background:#fff;}
 h1,h2{clear:both;}
 #header_outer{border-bottom:1px solid #dbdbdb;}
-#header{width:960px;margin:0 auto;height:40px;text-align:left;color:#494949;border-bottom-color:#585858;}#header #logo{float:left;}
+#header{width:960px;margin:0 auto;height:40px;text-align:left;color:#494949;border-bottom-color:#666666;}#header #logo{float:left;}
 #header #mainnav{margin-top:12px;float:left;margin-left:40px;}
 #header #utils{margin-top:12px;float:right;margin-right:10px;}
 #header a{text-decoration:none;}
 #header a:hover{text-decoration:underline;}
-#main_outer{width:100%;background-color:#fffeff;}
+#main_outer{width:100%;background-color:#666666;}
 #main{width:960px;margin:0 auto;text-align:left;padding:0px;padding-top:8px;padding-bottom:20px;}
 #trip_planner{width:960px;height:600px;background-color:#fff;border-color:#999999;border-width:4px;border-style:solid;}#trip_planner h2{font-size:18px;margin:6px;}
 #trip_planner #search_panel{width:200px;height:600px;background-color:#333333;float:left;color:white;}
 #trip_planner #search_panel #search_box p{margin:8px;}
 #trip_planner #search_panel #search_box input[type=text]{width:170px;font-size:14px;}
-#trip_planner #itinerary_panel{width:200px;height:600px;background-color:#eee;float:left;}
-#trip_planner #map_panel{width:560px;height:600px;float:left;background-color:#cccccc;}#trip_planner #map_panel #map_canvas{width:560px;height:600px;}
+#trip_planner #itinerary_panel{width:200px;height:600px;background-color:#eee;float:left;}#trip_planner #itinerary_panel .instructions{margin-left:10px;font-size:10px;margin-bottom:4px;}
+#trip_planner #map_panel{width:560px;height:600px;float:left;background-color:#cccccc;position:relative;}#trip_planner #map_panel #map_canvas{width:560px;height:600px;}
+#trip_planner #map_panel #map_loader{background-color:#000;position:absolute;width:80px;height:80px;z-index:100;text-align:center;color:#fff;left:240px;top:260px;padding-top:16px;-moz-border-radius:5px;-webkit-border-radius:5px;display:none;}
 #trip_planner .location,#trip_planner .search_result{height:30px;margin-bottom:2px;height:45px;}#trip_planner .location .name,#trip_planner .search_result .name{margin-left:8px;margin-top:4px;}
 #trip_planner .location{background-color:#fff;}
 #trip_planner .search_result{background-color:#000000;}

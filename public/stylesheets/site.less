@@ -1,6 +1,6 @@
 body {
   text-align: center;
-	background: #eceeee;
+	background: #fff;
 }
 /********************************************************************************************
  * Text
@@ -15,6 +15,7 @@ body {
 
 #header_outer {
 	border-bottom: 1px solid #dbdbdb;
+
 }
 #header {
   width: 960px;
@@ -22,7 +23,7 @@ body {
  height: 40px;
  text-align: left;
  color: #494949;
-	border-bottom-color: #585858;
+	border-bottom-color: #666666;
 	
 	#logo{
 		float: left;
@@ -55,7 +56,7 @@ body {
  * ******************************************************************************************/
 #main_outer {
   width: 100%;
-	background-color: #fffeff;
+	background-color: #666666;
 }
 #main {
   width: 960px;
@@ -107,6 +108,11 @@ body {
         height:600px;
         background-color:#eee;
         float:left;
+        .instructions{
+            margin-left:10px;
+            font-size:10px;
+            margin-bottom:4px;
+        }
         #itinerary_items{
 
         }
@@ -116,10 +122,27 @@ body {
         height:600px;
         float:left;
         background-color:#cccccc;
+        position:relative;
         #map_canvas{
             width:560px;
             height:600px;
         }
+        #map_loader{
+            background-color:#000;
+            position:absolute;
+            width:80px;
+            height:80px;
+            z-index:100;
+            text-align:center;
+            color:#fff;
+            left:240px;
+            top:260px;
+            padding-top:16px;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            display:none;
+        }
+
 	}
 
    .location, .search_result{
