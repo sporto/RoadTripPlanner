@@ -187,7 +187,16 @@ var AppController = Backbone.Controller.extend({
     addLocationModelToItinerary:function(model){
 
         //models are added at the end of the collection
-        var new_ix = this.location_collection.length;
+        //get the last in the collection and use that index +1
+        var new_ix = 1;
+        if(!this.location_collection.isEmpty()){
+            var last = this.location_collection.last();
+            var new_ix = last.get("index")+1;
+        }
+
+        //var new_ix = this.location_collection.length;
+
+        log("New index is "+ new_ix);
         model.set({index:new_ix});
 
         //add a listener for this model
@@ -463,5 +472,5 @@ function onSearchFieldChange(event){
 
 
 function log(msg){
-    console.log(msg);
+    if (window.console && console.log) console.log(msg);
 }
